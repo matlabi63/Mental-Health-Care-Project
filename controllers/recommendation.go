@@ -5,89 +5,75 @@ import (
 	"MentalHealthCare/models"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
-//get all recommendations
-func GetRecommendations(c *gin.Context) {
+// GetRecommendations retrieves all recommendations
+func GetRecommendations(c echo.Context) error {
 	var recommendations []models.Recommendation
 	if err := database.DB.Find(&recommendations).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	c.JSON(http.StatusOK, recommendations)
+	return c.JSON(http.StatusOK, recommendations)
 }
 
-//get a specific recommendation by ID
-func GetRecommendationByID(c *gin.Context) {
+// GetRecommendationByID retrieves a specific recommendation by ID
+func GetRecommendationByID(c echo.Context) error {
 	recommendationID := c.Param("id")
 	var recommendation models.Recommendation
 
 	if err := database.DB.First(&recommendation, recommendationID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Recommendation not found"})
-		return
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Recommendation not found"})
 	}
-	c.JSON(http.StatusOK, recommendation)
+	return c.JSON(http.StatusOK, recommendation)
 }
 
-//creates a new recommendation
-func CreateRecommendation(c *gin.Context) {
+// CreateRecommendation creates a new recommendation
+func CreateRecommendation(c echo.Context) error {
 	var recommendation models.Recommendation
-	if err := c.ShouldBindJSON(&recommendation); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err := c.Bind(&recommendation); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
 	if err := database.DB.Create(&recommendation).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusCreated, recommendation)
+	return c.JSON(http.StatusCreated, recommendation)
 }
 
-// updates an existing recommendation by ID
-func UpdateRecommendation(c *gin.Context) {
+// UpdateRecommendation updates an existing recommendation by ID
+func UpdateRecommendation(c echo.Context) error {
 	recommendationID := c.Param("id")
 	var recommendation models.Recommendation
 
-	// Find the recommendation by ID
 	if err := database.DB.First(&recommendation, recommendationID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Recommendation not found"})
-		return
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Recommendation not found"})
 	}
 
-	// Bind the incoming JSON to the recommendation object
-	if err := c.ShouldBindJSON(&recommendation); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err := c.Bind(&recommendation); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	// Save the updated recommendation details
 	if err := database.DB.Save(&recommendation).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Recommendation updated successfully", "recommendation": recommendation})
+	return c.JSON(http.StatusOK, map[string]interface{}{"message": "Recommendation updated successfully", "recommendation": recommendation})
 }
 
 // DeleteRecommendation deletes a recommendation by ID
-func DeleteRecommendation(c *gin.Context) {
+func DeleteRecommendation(c echo.Context) error {
 	recommendationID := c.Param("id")
 	var recommendation models.Recommendation
 
-	// Find the recommendation by ID
 	if err := database.DB.First(&recommendation, recommendationID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Recommendation not found"})
-		return
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Recommendation not found"})
 	}
 
-	// Delete the recommendation
 	if err := database.DB.Delete(&recommendation).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Recommendation deleted successfully"})
+	return c.JSON(http.StatusOK, map[string]string{"message": "Recommendation deleted successfully"})
 }

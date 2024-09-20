@@ -4,27 +4,33 @@ import (
 	"MentalHealthCare/database"
 	"MentalHealthCare/routes"
 	"log"
+	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-    // Load .env file
-    err := godotenv.Load()
-    if err != nil {
-        log.Fatal("Error loading .env file")
-    }
+	// Load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-    // Initialize the database
-    database.InitDatabase()
+	database.InitDatabase()
 
-    // Create a new Gin router
-    router := gin.Default()
+	e := echo.New()
 
-    // Setup routes
-    routes.SetupRoutes(router)
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-    // Start the server
-    router.Run(":8080")
+	routes.SetupRoutes(e)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "2313"
+	}
+
+	e.Logger.Fatal(e.Start(":" + port))
 }

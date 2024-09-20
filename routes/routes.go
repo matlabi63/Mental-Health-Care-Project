@@ -3,10 +3,10 @@ package routes
 import (
 	"MentalHealthCare/controllers"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
-func SetupRoutes(router *gin.Engine) {
+func SetupRoutes(router *echo.Echo) {
 
 	router.GET("/users", controllers.GetUsers)
 	router.GET("/users/:id", controllers.GetUserByID)

@@ -5,105 +5,95 @@ import (
 	"MentalHealthCare/models"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
-
-func GetDoctors(c *gin.Context) {
+// GetDoctors retrieves all doctors from the database
+func GetDoctors(c echo.Context) error {
 	var doctors []models.Doctor
 	if err := database.DB.Find(&doctors).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
-	c.JSON(http.StatusOK, doctors)
+	return c.JSON(http.StatusOK, doctors)
 }
 
-
-func GetDoctorByID(c *gin.Context) {
+// GetDoctorByID retrieves a doctor by its ID
+func GetDoctorByID(c echo.Context) error {
 	doctorID := c.Param("id")
 	var doctor models.Doctor
 
 	if err := database.DB.First(&doctor, doctorID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Doctor not found"})
-		return
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Doctor not found"})
 	}
-	c.JSON(http.StatusOK, doctor)
+	return c.JSON(http.StatusOK, doctor)
 }
 
-
-func CreateDoctor(c *gin.Context) {
+// CreateDoctor creates a new doctor
+func CreateDoctor(c echo.Context) error {
 	var doctor models.Doctor
-	if err := c.ShouldBindJSON(&doctor); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err := c.Bind(&doctor); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	
+	// Check if the associated user exists
 	var user models.User
 	if err := database.DB.First(&user, doctor.UserID).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
-		return
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "User not found"})
 	}
 
+	// Create doctor entry
 	if err := database.DB.Create(&doctor).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusCreated, doctor)
+	return c.JSON(http.StatusCreated, doctor)
 }
 
-
-func UpdateDoctor(c *gin.Context) {
+// UpdateDoctor updates an existing doctor by ID
+func UpdateDoctor(c echo.Context) error {
 	doctorID := c.Param("id")
 	var doctor models.Doctor
 
-
+	// Find the doctor by ID
 	if err := database.DB.First(&doctor, doctorID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Doctor not found"})
-		return
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Doctor not found"})
 	}
 
-	
-	if err := c.ShouldBindJSON(&doctor); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	// Bind new data
+	if err := c.Bind(&doctor); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	
+	// Check if the user exists if UserID is provided
 	if doctor.UserID != 0 {
 		var user models.User
 		if err := database.DB.First(&user, doctor.UserID).Error; err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
-			return
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "User not found"})
 		}
 	}
 
-	
+	// Save the updated doctor record
 	if err := database.DB.Save(&doctor).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Doctor updated successfully", "doctor": doctor})
+	return c.JSON(http.StatusOK, map[string]interface{}{"message": "Doctor updated successfully", "doctor": doctor})
 }
 
-
-func DeleteDoctor(c *gin.Context) {
+// DeleteDoctor deletes a doctor by ID
+func DeleteDoctor(c echo.Context) error {
 	doctorID := c.Param("id")
 	var doctor models.Doctor
 
-	
+	// Find the doctor by ID
 	if err := database.DB.First(&doctor, doctorID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Doctor not found"})
-		return
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Doctor not found"})
 	}
 
-	
+	// Delete the doctor record
 	if err := database.DB.Delete(&doctor).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Doctor deleted successfully"})
+	return c.JSON(http.StatusOK, map[string]string{"message": "Doctor deleted successfully"})
 }
