@@ -11,6 +11,10 @@ This Application is used to manage stress and anxiety, talk to psychologist or m
 - Request validation: [Validator](https://github.com/go-playground/validator)
 - Application configuration: [Viper](https://github.com/spf13/viper)
 
+- ## Mental_Health_care ERD: [Mental Health Care Project Diagram](https://www.drawdb.app/editor?shareId=7d20770ad62c4c45d34e18eb7b348244)
+
+- ## Mental_Health_care UseCase: [Mental Health Care Project UseCase](https://drive.google.com/file/d/11JkDkyQBQFAfTwE7VD3i58ER_2mfqW1O/view?usp=sharing)
+
 ## Notes
 
 There are two branches in this repository:
