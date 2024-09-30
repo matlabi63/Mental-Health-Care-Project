@@ -3,21 +3,14 @@ package main
 import (
 	"MentalHealthCare/database"
 	"MentalHealthCare/routes"
-	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
+	
 	database.InitDatabase()
 
 	e := echo.New()
