@@ -4,7 +4,7 @@ import (
 	"MentalHealthCare/controllers"
 	"MentalHealthCare/middlewares"
 	"MentalHealthCare/models"
-	"MentalHealthCare/utils"
+	"os"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -21,13 +21,13 @@ func SetupRoutes(e *echo.Echo) {
 
 	// Initialize authentication middleware
 	jwtConfig := middlewares.JWTConfig{
-		SecretKey: utils.GetConfig("JWT_SECRET_KEY"),
+		SecretKey: os.Getenv("JWT_SECRET_KEY"),
 	}
 
 	authMiddlewareConfig := jwtConfig.Init()
 
 	jwtOptions := models.JWTOptions{
-		SecretKey:       utils.GetConfig("JWT_SECRET_KEY"),
+		SecretKey:       os.Getenv("JWT_SECRET_KEY"),
 		ExpiresDuration: 1,
 	}
 
