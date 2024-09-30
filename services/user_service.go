@@ -4,7 +4,6 @@ import (
 	"MentalHealthCare/models"
 	"MentalHealthCare/repositories"
 	"MentalHealthCare/utils"
-	"errors"
 )
 
 type UserService struct {
@@ -20,23 +19,23 @@ func InitUserService(jwtOptions models.JWTOptions) UserService {
 	}
 }
 
-// Register registers a new user in the system.
+// registers a new user in the system.
 func (us *UserService) Register(registerReq models.RegisterRequest) (models.User, error) {
-	return us.Repository.Create(registerReq)
+	return us.Repository.Register(registerReq)
 }
 
 // Login authenticates the user and generates a JWT token.
 func (us *UserService) Login(loginReq models.LoginRequest) (string, error) {
-	user, err := us.Repository.GetByEmail(loginReq.Email)
+	user, err := us.Repository.GetByEmail(loginReq)
 
 	if err != nil {
-		return "", errors.New("user not found")
+		return "", err
 	}
 
 	// Verify password
-	if !utils.CheckPasswordHash(loginReq.Password, user.Password) {
-		return "", errors.New("invalid password")
-	}
+	// if !utils.CheckPasswordHash(loginReq.Password, user.Password) {
+	// 	return "", errors.New("invalid password")
+	// }
 
 	// Generate JWT token
 	token, err := utils.GenerateJWT(int(user.ID), us.JwtOptions)
@@ -49,15 +48,15 @@ func (us *UserService) Login(loginReq models.LoginRequest) (string, error) {
 
 // GetUserInfo retrieves user information based on user ID.
 func (us *UserService) GetUserInfo(id string) (models.User, error) {
-	return us.Repository.GetByID(id)
+	return us.Repository.GetUserInfo(id)
 }
 
-// Update updates the user information.
-func (us *UserService) Update(userReq models.UserUpdateRequest, id string) (models.User, error) {
-	return us.Repository.Update(userReq, id)
-}
+// // updates the user information.
+// func (us *UserService) Update(userReq models.UserUpdateRequest, id string) (models.User, error) {
+// 	return us.Repository.Update(userReq, id)
+// }
 
-// Delete deletes a user account by its ID.
-func (us *UserService) Delete(id string) error {
-	return us.Repository.Delete(id)
-}
+// // deletes a user account by its ID.
+// func (us *UserService) Delete(id string) error {
+// 	return us.Repository.Delete(id)
+// }

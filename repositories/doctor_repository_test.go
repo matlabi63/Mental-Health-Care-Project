@@ -1,290 +1,108 @@
-// package repositories_test
-
-// import (
-// 	"MentalHealthCare/models"
-// 	"errors"
-// 	"testing"
-
-// 	"github.com/stretchr/testify/assert"
-// )
-
-// var doctorRepository *mocks.DoctorRepository // Assuming you have a mock setup
-// var doctorService *DoctorService              // Assuming you have a Doctor service
-
-// func TestMain(m *testing.M) {
-// 	doctorRepository = new(mocks.DoctorRepository)
-// 	doctorService = NewDoctorService(doctorRepository) // Initialize your service with the mock repository
-// 	m.Run()
-// }
-
-// func TestGetAll(t *testing.T) {
-// 	t.Run("GetAll | Valid", func(t *testing.T) {
-// 		doctorRepository.On("GetAll").Return([]models.Doctor{}, nil).Once()
-
-// 		result, err := doctorService.GetAll()
-
-// 		assert.NotNil(t, result)
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("GetAll | Invalid", func(t *testing.T) {
-// 		doctorRepository.On("GetAll").Return([]models.Doctor{}, errors.New("error")).Once()
-
-// 		result, err := doctorService.GetAll()
-
-// 		assert.NotNil(t, result)
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-// func TestGetByID(t *testing.T) {
-// 	t.Run("GetByID | Valid", func(t *testing.T) {
-// 		doctorRepository.On("GetByID", "1").Return(models.Doctor{}, nil).Once()
-
-// 		result, err := doctorService.GetByID("1")
-
-// 		assert.NotNil(t, result)
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("GetByID | Invalid", func(t *testing.T) {
-// 		doctorRepository.On("GetByID", "0").Return(models.Doctor{}, errors.New("whoops")).Once()
-
-// 		result, err := doctorService.GetByID("0")
-
-// 		assert.NotNil(t, result)
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-// func TestCreate(t *testing.T) {
-// 	t.Run("Create | Valid", func(t *testing.T) {
-// 		doctorReq := models.Doctor{Name: "Dr. Smith", Specialty: "Cardiology"}
-// 		doctorRepository.On("Create", doctorReq).Return(doctorReq, nil).Once()
-
-// 		result, err := doctorService.Create(doctorReq)
-
-// 		assert.NotNil(t, result)
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("Create | Invalid", func(t *testing.T) {
-// 		doctorReq := models.Doctor{Name: "Dr. Smith", Specialty: "Cardiology"}
-// 		doctorRepository.On("Create", doctorReq).Return(models.Doctor{}, errors.New("whoops")).Once()
-
-// 		result, err := doctorService.Create(doctorReq)
-
-// 		assert.NotNil(t, result)
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-// func TestUpdate(t *testing.T) {
-// 	t.Run("Update | Valid", func(t *testing.T) {
-// 		doctorReq := models.Doctor{Name: "Dr. Smith", Specialty: "Cardiology"}
-// 		doctorRepository.On("Update", doctorReq, "1").Return(doctorReq, nil).Once()
-
-// 		result, err := doctorService.Update(doctorReq, "1")
-
-// 		assert.NotNil(t, result)
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("Update | Invalid", func(t *testing.T) {
-// 		doctorReq := models.Doctor{Name: "Dr. Smith", Specialty: "Cardiology"}
-// 		doctorRepository.On("Update", doctorReq, "0").Return(models.Doctor{}, errors.New("whoops")).Once()
-
-// 		result, err := doctorService.Update(doctorReq, "0")
-
-// 		assert.NotNil(t, result)
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-// func TestDelete(t *testing.T) {
-// 	t.Run("Delete | Valid", func(t *testing.T) {
-// 		doctorRepository.On("Delete", "1").Return(nil).Once()
-
-// 		err := doctorService.Delete("1")
-
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("Delete | Invalid", func(t *testing.T) {
-// 		doctorRepository.On("Delete", "0").Return(errors.New("whoops")).Once()
-
-// 		err := doctorService.Delete("0")
-
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-/////
-
 package repositories_test
 
 import (
 	"MentalHealthCare/models"
-	"MentalHealthCare/repositories/mocks"
 	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDoctorRepository_Create(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewDoctorRepository(t)
+func TestGetAllDoctor(t *testing.T) {
+	t.Run("GetAll | Valid", func(t *testing.T) {
+		doctorRepository.On("GetAll").Return([]models.Doctor{}, nil).Once()
 
-	// Define a sample doctor to create
-	doctorReq := models.Doctor{
-		UserID:    101,
-		Name:  "Dr. Smith",
-		Specialty: "Surgion",
-	}
+		result, err := doctorService.GetAll()
 
-	// Define the expected result
-	expectedDoctor := doctorReq
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("Create", doctorReq).Return(expectedDoctor, nil)
+	t.Run("GetAll | Invalid", func(t *testing.T) {
+		doctorRepository.On("GetAll").Return([]models.Doctor{}, errors.New("error")).Once()
 
-	// Call the method
-	result, err := mockRepo.Create(doctorReq)
+		result, err := doctorService.GetAll()
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedDoctor, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestDoctorRepository_Create_Error(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewDoctorRepository(t)
+func TestGetByIDDoctor(t *testing.T) {
+	t.Run("GetByID | Valid", func(t *testing.T) {
+		doctorRepository.On("GetByID", "1").Return(models.Doctor{}, nil).Once()
 
-	// Define a sample doctor to create
-	doctorReq := models.Doctor{
-		UserID:    101,
-		Name:  "Dr. Smith",
-		Specialty: "Surgion",
-	}
+		result, err := doctorService.GetByID("1")
 
-	// Define the error we expect
-	expectedError := errors.New("failed to create doctor")
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("Create", doctorReq).Return(models.Doctor{}, expectedError)
+	t.Run("GetByID | Invalid", func(t *testing.T) {
+		doctorRepository.On("GetByID", "0").Return(models.Doctor{}, errors.New("whoops")).Once()
 
-	// Call the method
-	result, err := mockRepo.Create(doctorReq)
+		result, err := doctorService.GetByID("0")
 
-	// Assert the result
-	assert.Error(t, err)
-	assert.Equal(t, expectedError, err)
-	assert.Equal(t, models.Doctor{}, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestDoctorRepository_Delete(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewDoctorRepository(t)
+func TestCreateDoctor(t *testing.T) {
+	t.Run("Create | Valid", func(t *testing.T) {
+		doctorRepository.On("Create", models.DoctorRequest{}).Return(models.Doctor{}, nil).Once()
 
-	// Define the ID to delete
-	doctorID := "1"
+		result, err := doctorService.Create(models.DoctorRequest{})
 
-	// Set up the expectation
-	mockRepo.On("Delete", doctorID).Return(nil)
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Call the method
-	err := mockRepo.Delete(doctorID)
+	t.Run("Create | Invalid", func(t *testing.T) {
+		doctorRepository.On("Create", models.DoctorRequest{}).Return(models.Doctor{}, errors.New("oops")).Once()
 
-	// Assert the result
-	assert.NoError(t, err)
+		result, err := doctorService.Create(models.DoctorRequest{})
 
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestDoctorRepository_GetAll(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewDoctorRepository(t)
 
-	// Define the expected doctors
-	expectedDoctors := []models.Doctor{
-		{ID: 1, Name: "Dr. Smith", Specialty: "Surgion"},
-		{ID: 2, Name: "Dr. Johnson", Specialty: "Dentist"},
-	}
+func TestUpdateDoctor(t *testing.T) {
+	t.Run("Update | Valid", func(t *testing.T) {
+		doctorRepository.On("Update", models.DoctorRequest{}, "1").Return(models.Doctor{}, nil).Once()
 
-	// Set up the expectation
-	mockRepo.On("GetAll").Return(expectedDoctors, nil)
+		result, err := doctorService.Update(models.DoctorRequest{}, "1")
 
-	// Call the method
-	result, err := mockRepo.GetAll()
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedDoctors, result)
+	t.Run("Update | Invalid", func(t *testing.T) {
+		doctorRepository.On("Update", models.DoctorRequest{}, "0").Return(models.Doctor{}, errors.New("oops")).Once()
 
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		result, err := doctorService.Update(models.DoctorRequest{}, "0")
+
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestDoctorRepository_GetByID(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewDoctorRepository(t)
+func TestDeleteDoctor(t *testing.T) {
+	t.Run("Delete | Valid", func(t *testing.T) {
+		doctorRepository.On("Delete", "1").Return(nil).Once()
 
-	// Define the ID to fetch
-	doctorID := "1"
+		err := doctorService.Delete("1")
 
-	// Define the expected doctor
-	expectedDoctor := models.Doctor{
-		UserID:    101,
-		Name:  "Dr. Smith",
-		Specialty: "Surgion",
-	}
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("GetByID", doctorID).Return(expectedDoctor, nil)
+	t.Run("Delete | Invalid", func(t *testing.T) {
+		doctorRepository.On("Delete", "0").Return(errors.New("whoops")).Once()
 
-	// Call the method
-	result, err := mockRepo.GetByID(doctorID)
+		err := doctorService.Delete("0")
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedDoctor, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
-}
-
-func TestDoctorRepository_Update(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewDoctorRepository(t)
-
-	// Define a sample doctor to update
-	doctorReq := models.Doctor{
-		UserID:    101,
-		Name:  "Dr. Smith",
-		Specialty: "Surgion",
-	}
-
-	// Define the expected updated doctor
-	expectedDoctor := doctorReq
-
-	// Set up the expectation
-	mockRepo.On("Update", doctorReq, "1").Return(expectedDoctor, nil)
-
-	// Call the method
-	result, err := mockRepo.Update(doctorReq, "1")
-
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedDoctor, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, err)
+	})
 }

@@ -1,105 +1,44 @@
-<!-- routes
+Mental Health Care
 
-package main
+This Application is used to manage stress and anxiety, talk to psychologist or mental health specialist and also road information about mental health.
 
-import (
-    "github.com/gin-gonic/gin"
-)
+## Tools Used
 
-func main() {
-    router := gin.Default()
+- Programming language: [Go](https://go.dev/)
+- Database: [MySQL](https://www.mysql.com/)
+- Web framework: [Echo](https://echo.labstack.com/)
+- ORM library: [GORM](https://gorm.io/)
+- Request validation: [Validator](https://github.com/go-playground/validator)
+- Application configuration: [Viper](https://github.com/spf13/viper)
 
-    // Users Endpoints
-    router.GET("/users", getUsers)
-    router.GET("/users/:id", getUserByID)
-    router.POST("/users", createUser)
-    router.PUT("/users/:id", updateUser)
-    router.DELETE("/users/:id", deleteUser)
+## Notes
 
-    // Doctors Endpoints
-    router.GET("/doctors", getDoctors)
-    router.GET("/doctors/:id", getDoctorByID)
-    router.POST("/doctors", createDoctor)
-    router.PUT("/doctors/:id", updateDoctor)
-    router.DELETE("/doctors/:id", deleteDoctor)
+There are two branches in this repository:
 
-    // Patients Endpoints
-    router.GET("/patients", getPatients)
-    router.GET("/patients/:id", getPatientByID)
-    router.POST("/patients", createPatient)
-    router.PUT("/patients/:id", updatePatient)
-    router.DELETE("/patients/:id", deletePatient)
+- master: REST API application with clean architecture.
+- mvc: REST API application with MVC architecture.
 
-    // Complaints Endpoints
-    router.GET("/complaints", getComplaints)
-    router.GET("/complaints/:id", getComplaintByID)
-    router.POST("/complaints", createComplaint)
-    router.PUT("/complaints/:id", updateComplaint)
-    router.DELETE("/complaints/:id", deleteComplaint)
+## How to Use
 
-    // Recommendations Endpoints
-    router.GET("/recommendations", getRecommendations)
-    router.GET("/recommendations/:id", getRecommendationByID)
-    router.POST("/recommendations", createRecommendation)
-    router.PUT("/recommendations/:id", updateRecommendation)
-    router.DELETE("/recommendations/:id", deleteRecommendation)
+1. Clone this repository.
 
-    // Informations Endpoints (Mental Health Articles)
-    router.GET("/informations", getInformations)
-    router.GET("/informations/:id", getInformationByID)
-    router.POST("/informations", createInformation)
-    router.PUT("/informations/:id", updateInformation)
-    router.DELETE("/informations/:id", deleteInformation)
+2. Copy the .env file for database configuration. Then, configure the database connection inside that file.
 
-    // Admins Endpoints
-    router.GET("/admins", getAdmins)
-    router.GET("/admins/:id", getAdminByID)
-    router.POST("/admins", createAdmin)
-    router.PUT("/admins/:id", updateAdmin)
-    router.DELETE("/admins/:id", deleteAdmin)
+3. Create a new database.
 
-    router.Run(":8080")
-}
+sql
+CREATE DATABASE mental_health_care;
 
-func getUsers(c *gin.Context) {}
-func getUserByID(c *gin.Context) {}
-func createUser(c *gin.Context) {}
-func updateUser(c *gin.Context) {}
-func deleteUser(c *gin.Context) {}
+4. Run the application.
 
-func getDoctors(c *gin.Context) {}
-func getDoctorByID(c *gin.Context) {}
-func createDoctor(c *gin.Context) {}
-func updateDoctor(c *gin.Context) {}
-func deleteDoctor(c *gin.Context) {}
+sh
+go run main.go
 
-func getPatients(c *gin.Context) {}
-func getPatientByID(c *gin.Context) {}
-func createPatient(c *gin.Context) {}
-func updatePatient(c *gin.Context) {}
-func deletePatient(c *gin.Context) {}
+## Running with Docker
 
-func getComplaints(c *gin.Context) {}
-func getComplaintByID(c *gin.Context) {}
-func createComplaint(c *gin.Context) {}
-func updateComplaint(c *gin.Context) {}
-func deleteComplaint(c *gin.Context) {}
+The application can be run as a Docker container with this command. Make sure to adjust the volume setting inside docker-compose.yml file.
 
-func getRecommendations(c *gin.Context) {}
-func getRecommendationByID(c *gin.Context) {}
-func createRecommendation(c *gin.Context) {}
-func updateRecommendation(c *gin.Context) {}
-func deleteRecommendation(c *gin.Context) {}
+Run the application.
 
-func getInformations(c *gin.Context) {}
-func getInformationByID(c *gin.Context) {}
-func createInformation(c *gin.Context) {}
-func updateInformation(c *gin.Context) {}
-func deleteInformation(c *gin.Context) {}
-
-func getAdmins(c *gin.Context) {}
-func getAdminByID(c *gin.Context) {}
-func createAdmin(c *gin.Context) {}
-func updateAdmin(c *gin.Context) {}
-func deleteAdmin(c *gin.Context) {}
- -->
+sh
+docker compose up -d

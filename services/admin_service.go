@@ -3,48 +3,34 @@ package services
 import (
 	"MentalHealthCare/models"
 	"MentalHealthCare/repositories"
-	"MentalHealthCare/utils"
 )
 
 type AdminService struct {
-	Repository repositories.AdminRepository
-	JwtOptions models.JWTOptions
+    Repository repositories.AdminRepository
 }
 
-// NewAdminService initializes and returns an AdminService instance.
-// The repository is passed in, which allows for dependency injection.
-func NewAdminService(repo repositories.AdminRepository, jwtOptions models.JWTOptions) *AdminService {
-	return &AdminService{
-		Repository: repo,
-		JwtOptions: jwtOptions,
-	}
+func InitAdminService() AdminService {
+    return AdminService{
+        Repository: &repositories.AdminRepositoryImpl{},
+    }
 }
 
-// Register creates a new admin account.
-func (as *AdminService) Register(adminReq models.Admin) (models.Admin, error) {
-	// Delegates admin creation to the repository.
-	return as.Repository.Create(adminReq)
+func (as *AdminService) GetAll() ([]models.Admin, error) {
+    return as.Repository.GetAll()
 }
 
-// Login handles admin login and returns a JWT token if successful.
-func (as *AdminService) Login(loginReq models.LoginRequest) (string, error) {
-	// Fetch admin by email through repository
-	admin, err := as.Repository.GetByEmail(loginReq)
-	if err != nil {
-		return "", err
-	}
-
-	// Generate JWT for admin
-	token, err := utils.GenerateJWT(int(admin.ID), as.JwtOptions)
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
+func (as *AdminService) GetByID(id string) (models.Admin, error) {
+    return as.Repository.GetByID(id)
 }
 
-// GetAdminInfo retrieves an admin's information by ID.
-func (as *AdminService) GetAdminInfo(id string) (models.Admin, error) {
-	// Fetch admin by ID through repository
-	return as.Repository.GetByID(id)
+func (as *AdminService) Create(adminReq models.AdminRequest) (models.Admin, error) {
+    return as.Repository.Create(adminReq)
+}
+
+func (as *AdminService) Update(adminReq models.AdminRequest, id string) (models.Admin, error) {
+    return as.Repository.Update(adminReq, id)
+}
+
+func (as *AdminService) Delete(id string) error {
+    return as.Repository.Delete(id)
 }

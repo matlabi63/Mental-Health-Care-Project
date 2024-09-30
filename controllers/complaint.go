@@ -1,79 +1,150 @@
 package controllers
 
 import (
-	"MentalHealthCare/database"
 	"MentalHealthCare/models"
 	"net/http"
+
+	"MentalHealthCare/services"
 
 	"github.com/labstack/echo/v4"
 )
 
-// GetComplaints retrieves all complaints from the database
-func GetComplaints(c echo.Context) error {
-	var complaints []models.Complaint
-	if err := database.DB.Find(&complaints).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-	return c.JSON(http.StatusOK, complaints)
+
+type ComplaintController struct {
+	service     services.ComplaintService
+	userService services.UserService
 }
 
-// GetComplaintByID retrieves a complaint by its ID
-func GetComplaintByID(c echo.Context) error {
+func InitComplaintController() ComplaintController {
+	return ComplaintController {
+		service:     services.InitComplaintService(),
+		userService: services.InitUserService(models.JWTOptions{}),
+	}
+}
+
+
+func (cc *ComplaintController) GetAll(c echo.Context) error {
+	complaints, err := cc.service.GetAll()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Error with Complaint",
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Response[[]models.Complaint]{
+		Status:  "Success",
+		Message: "All Complaint",
+		Data:    complaints,
+	})
+}
+
+func (cc *ComplaintController) GetByID(c echo.Context) error {
 	complaintID := c.Param("id")
-	var complaint models.Complaint
 
-	if err := database.DB.First(&complaint, complaintID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Complaint not found"})
+	complaint, err := cc.service.GetByID(complaintID)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, models.Response[string]{
+			Status:  "Failed",
+			Message: "Complaint not found",
+		})
 	}
-	return c.JSON(http.StatusOK, complaint)
+
+	return c.JSON(http.StatusOK, models.Response[models.Complaint]{
+		Status:  "Success",
+		Message: "Complaint found",
+		Data:    complaint,
+	})
 }
 
-// CreateComplaint creates a new complaint
-func CreateComplaint(c echo.Context) error {
-	var complaint models.Complaint
-	if err := c.Bind(&complaint); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+func (cc *ComplaintController) Create(c echo.Context) error {
+	var complaintReq models.ComplaintRequest
+
+	if err := c.Bind(&complaintReq); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
 	}
 
-	if err := database.DB.Create(&complaint).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	err := complaintReq.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
 	}
 
-	return c.JSON(http.StatusCreated, complaint)
+	complaint, err := cc.service.Create(complaintReq)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Please complete the required file",
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Response[models.Complaint]{
+		Status:  "Success",
+		Message: "Complaint updated",
+		Data:    complaint,
+	})
 }
 
-// UpdateComplaint updates an existing complaint
-func UpdateComplaint(c echo.Context) error {
+func (cc *ComplaintController) Update(c echo.Context) error {
+	var complaintReq models.ComplaintRequest
+
+	if err := c.Bind(&complaintReq); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
+	}
+
 	complaintID := c.Param("id")
-	var complaint models.Complaint
 
-	if err := database.DB.First(&complaint, complaintID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Complaint not found"})
+	err := complaintReq.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Please complete the required file",
+		})
 	}
 
-	if err := c.Bind(&complaint); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	complaint, err := cc.service.Update(complaintReq, complaintID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed to update the Complaint",
+		})
 	}
 
-	if err := database.DB.Save(&complaint).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, map[string]interface{}{"message": "Complaint updated successfully", "complaint": complaint})
+	return c.JSON(http.StatusOK, models.Response[models.Complaint]{
+		Status:  "Success",
+		Message: "Complaint updated",
+		Data:   complaint,
+	})
 }
 
-// DeleteComplaint deletes a complaint by its ID
-func DeleteComplaint(c echo.Context) error {
+func (cc *ComplaintController) Delete(c echo.Context) error {
 	complaintID := c.Param("id")
-	var complaint models.Complaint
 
-	if err := database.DB.First(&complaint, complaintID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Complaint not found"})
+	err := cc.service.Delete(complaintID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed to delete the Complaint",
+		})
 	}
 
-	if err := database.DB.Delete(&complaint).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, map[string]string{"message": "Complaint deleted successfully"})
+	return c.JSON(http.StatusOK, models.Response[string]{
+		Status:  "Success",
+		Message: "Complaint deleted",
+	})
 }

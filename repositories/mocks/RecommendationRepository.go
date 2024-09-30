@@ -14,7 +14,7 @@ type RecommendationRepository struct {
 }
 
 // Create provides a mock function with given fields: recReq
-func (_m *RecommendationRepository) Create(recReq models.Recommendation) (models.Recommendation, error) {
+func (_m *RecommendationRepository) Create(recReq models.RecommendationRequest) (models.Recommendation, error) {
 	ret := _m.Called(recReq)
 
 	if len(ret) == 0 {
@@ -23,16 +23,16 @@ func (_m *RecommendationRepository) Create(recReq models.Recommendation) (models
 
 	var r0 models.Recommendation
 	var r1 error
-	if rf, ok := ret.Get(0).(func(models.Recommendation) (models.Recommendation, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.RecommendationRequest) (models.Recommendation, error)); ok {
 		return rf(recReq)
 	}
-	if rf, ok := ret.Get(0).(func(models.Recommendation) models.Recommendation); ok {
+	if rf, ok := ret.Get(0).(func(models.RecommendationRequest) models.Recommendation); ok {
 		r0 = rf(recReq)
 	} else {
 		r0 = ret.Get(0).(models.Recommendation)
 	}
 
-	if rf, ok := ret.Get(1).(func(models.Recommendation) error); ok {
+	if rf, ok := ret.Get(1).(func(models.RecommendationRequest) error); ok {
 		r1 = rf(recReq)
 	} else {
 		r1 = ret.Error(1)
@@ -118,7 +118,7 @@ func (_m *RecommendationRepository) GetByID(id string) (models.Recommendation, e
 }
 
 // Update provides a mock function with given fields: recReq, id
-func (_m *RecommendationRepository) Update(recReq models.Recommendation, id string) (models.Recommendation, error) {
+func (_m *RecommendationRepository) Update(recReq models.RecommendationRequest, id string) (models.Recommendation, error) {
 	ret := _m.Called(recReq, id)
 
 	if len(ret) == 0 {
@@ -127,16 +127,16 @@ func (_m *RecommendationRepository) Update(recReq models.Recommendation, id stri
 
 	var r0 models.Recommendation
 	var r1 error
-	if rf, ok := ret.Get(0).(func(models.Recommendation, string) (models.Recommendation, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.RecommendationRequest, string) (models.Recommendation, error)); ok {
 		return rf(recReq, id)
 	}
-	if rf, ok := ret.Get(0).(func(models.Recommendation, string) models.Recommendation); ok {
+	if rf, ok := ret.Get(0).(func(models.RecommendationRequest, string) models.Recommendation); ok {
 		r0 = rf(recReq, id)
 	} else {
 		r0 = ret.Get(0).(models.Recommendation)
 	}
 
-	if rf, ok := ret.Get(1).(func(models.Recommendation, string) error); ok {
+	if rf, ok := ret.Get(1).(func(models.RecommendationRequest, string) error); ok {
 		r1 = rf(recReq, id)
 	} else {
 		r1 = ret.Error(1)

@@ -15,7 +15,7 @@ func (dr *DoctorRepositoryImpl) GetAll() ([]models.Doctor, error) {
 	var doctors []models.Doctor
 
 	if err := database.DB.Find(&doctors).Error; err != nil {
-		return nil, err
+		return []models.Doctor{}, err
 	}
 
 	return doctors, nil

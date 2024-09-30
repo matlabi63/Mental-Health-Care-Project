@@ -1,99 +1,149 @@
 package controllers
 
 import (
-	"MentalHealthCare/database"
 	"MentalHealthCare/models"
+	"MentalHealthCare/services"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-// GetDoctors retrieves all doctors from the database
-func GetDoctors(c echo.Context) error {
-	var doctors []models.Doctor
-	if err := database.DB.Find(&doctors).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+type DoctorController struct {
+	service     services.DoctorService
+}
+ 
+func InitDoctorController() DoctorController {
+	return DoctorController {
+		service:     services.InitDoctorService(),
 	}
-	return c.JSON(http.StatusOK, doctors)
 }
 
-// GetDoctorByID retrieves a doctor by its ID
-func GetDoctorByID(c echo.Context) error {
+
+func (dc *DoctorController) GetAll(c echo.Context) error {
+	doctors, err := dc.service.GetAll()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed with Doctors",
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Response[[]models.Doctor]{
+		Status:  "Success",
+		Message: "Found information",
+		Data:    doctors,
+	})
+}
+
+func (dc *DoctorController) GetByID(c echo.Context) error {
 	doctorID := c.Param("id")
-	var doctor models.Doctor
 
-	if err := database.DB.First(&doctor, doctorID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Doctor not found"})
+	doctor, err := dc.service.GetByID(doctorID)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, models.Response[string]{
+			Status:  "Failed",
+			Message: "Doctor not found",
+		})
 	}
-	return c.JSON(http.StatusOK, doctor)
+
+	return c.JSON(http.StatusOK, models.Response[models.Doctor]{
+		Status:  "Success",
+		Message: "Doctor found",
+		Data:    doctor,
+	})
 }
 
-// CreateDoctor creates a new doctor
-func CreateDoctor(c echo.Context) error {
-	var doctor models.Doctor
-	if err := c.Bind(&doctor); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+func (dc *DoctorController) Create(c echo.Context) error {
+	var doctorReq models.DoctorRequest
+
+
+	if err := c.Bind(&doctorReq); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
 	}
 
-	// Check if the associated user exists
-	var user models.User
-	if err := database.DB.First(&user, doctor.UserID).Error; err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "User not found"})
+	err := doctorReq.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Please complete the required file",
+		})
 	}
 
-	// Create doctor entry
-	if err := database.DB.Create(&doctor).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	doctor, err := dc.service.Create(doctorReq)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed to create the doctor",
+		})
 	}
 
-	return c.JSON(http.StatusCreated, doctor)
+	return c.JSON(http.StatusCreated, models.Response[models.Doctor]{
+		Status:  "Success",
+		Message: "Dcotor created",
+		Data:    doctor,
+	})
 }
 
-// UpdateDoctor updates an existing doctor by ID
-func UpdateDoctor(c echo.Context) error {
+func (dc *DoctorController) Update(c echo.Context) error {
+	var doctorReq models.DoctorRequest
+
+	
+	if err := c.Bind(&doctorReq); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
+	}
+
 	doctorID := c.Param("id")
-	var doctor models.Doctor
 
-	// Find the doctor by ID
-	if err := database.DB.First(&doctor, doctorID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Doctor not found"})
+	err := doctorReq.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Please complete all the required file",
+		})
 	}
 
-	// Bind new data
-	if err := c.Bind(&doctor); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	doctor, err := dc.service.Update(doctorReq, doctorID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed to update the Doctors",
+		})
 	}
 
-	// Check if the user exists if UserID is provided
-	if doctor.UserID != 0 {
-		var user models.User
-		if err := database.DB.First(&user, doctor.UserID).Error; err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": "User not found"})
-		}
-	}
-
-	// Save the updated doctor record
-	if err := database.DB.Save(&doctor).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, map[string]interface{}{"message": "Doctor updated successfully", "doctor": doctor})
+	return c.JSON(http.StatusOK, models.Response[models.Doctor]{
+		Status:  "success",
+		Message: "Doctor updated",
+		Data:    doctor,
+	})
 }
 
-// DeleteDoctor deletes a doctor by ID
-func DeleteDoctor(c echo.Context) error {
+func (dc *DoctorController) Delete(c echo.Context) error {
 	doctorID := c.Param("id")
-	var doctor models.Doctor
 
-	// Find the doctor by ID
-	if err := database.DB.First(&doctor, doctorID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Doctor not found"})
+
+	err := dc.service.Delete(doctorID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed to delete doctor",
+		})
 	}
 
-	// Delete the doctor record
-	if err := database.DB.Delete(&doctor).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, map[string]string{"message": "Doctor deleted successfully"})
+	return c.JSON(http.StatusOK, models.Response[string]{
+		Status:  "Success",
+		Message: "Doctor farm deleted",
+	})
 }

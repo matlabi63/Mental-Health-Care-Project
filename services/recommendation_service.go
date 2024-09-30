@@ -26,17 +26,17 @@ func (rs *RecommendationService) GetByID(id string) (models.Recommendation, erro
 	return rs.Repository.GetByID(id)
 }
 
-// Create creates a new recommendation record.
+// creates a new recommendation record.
 func (rs *RecommendationService) Create(recommendationReq models.RecommendationRequest) (models.Recommendation, error) {
 	return rs.Repository.Create(recommendationReq)
 }
 
-// Update updates specific recommendation based on the request data and ID.
+// updates specific recommendation based on the request data and ID.
 func (rs *RecommendationService) Update(recommendationReq models.RecommendationRequest, id string) (models.Recommendation, error) {
 	return rs.Repository.Update(recommendationReq, id)
 }
 
-// Delete removes a recommendation record by its ID.
+// removes a recommendation record by its ID.
 func (rs *RecommendationService) Delete(id string) error {
 	return rs.Repository.Delete(id)
 }

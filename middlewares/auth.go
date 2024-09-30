@@ -16,8 +16,6 @@ type JWTCustomClaims struct {
 
 type JWTConfig struct {
 	SecretKey string
-	Issuer    string
-	Expiry    int64
 }
 
 func (jwtCfg *JWTConfig) Init() echojwt.Config {

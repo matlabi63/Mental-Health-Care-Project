@@ -5,18 +5,18 @@ import (
 	"MentalHealthCare/models"
 )
 
+
 type AdminRepositoryImpl struct{}
 
-
-func InitAdminRepository() AdminRepository {
-	return &AdminRepositoryImpl{}
-}
+// func InitAdminRepository() AdminRepository {
+// 	return &AdminRepositoryImpl{}
+// }
 
 func (ar *AdminRepositoryImpl) GetAll() ([]models.Admin, error) {
 	var admins []models.Admin
 
 	if err := database.DB.Find(&admins).Error; err != nil {
-		return nil, err
+		return []models.Admin{}, err
 	}
 
 	return admins, nil
@@ -42,17 +42,27 @@ func (ar *AdminRepositoryImpl) GetByEmail(loginReq models.LoginRequest) (models.
 	return admin, nil
 }
 
-func (ar *AdminRepositoryImpl) Create(adminReq models.Admin) (models.Admin, error) {
-	result := database.DB.Create(&adminReq)
+func (ar *AdminRepositoryImpl) Create(adminReq models.AdminRequest) (models.Admin, error) {
+	var admin models.Admin = models.Admin{
+		UserID: adminReq.UserID,
+		ManageUsers: adminReq.ManageUsers,
+
+	}
+
+	result := database.DB.Create(&admin)
 
 	if err := result.Error; err != nil {
 		return models.Admin{}, err
 	}
 
-	return adminReq, nil
+	if err := result.Last(&admin).Error; err != nil {
+		return models.Admin{}, err
+	}
+
+	return admin, nil
 }
 
-func (ar *AdminRepositoryImpl) Update(adminReq models.Admin, id string) (models.Admin, error) {
+func (ar *AdminRepositoryImpl) Update(adminReq models.AdminRequest, id string) (models.Admin, error) {
 	admin, err := ar.GetByID(id)
 
 	if err != nil {

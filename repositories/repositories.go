@@ -1,36 +1,36 @@
 package repositories
 
-import "MentalHealthCare/models"
+import (
+	"MentalHealthCare/models"
+)
 
+//  userRepository define user
 type UserRepository interface {
-	Create(registerReq models.RegisterRequest) (models.User, error)
-	GetByID(id string) (models.User, error)
-	GetByEmail(email string) (models.User, error) // Add this line
-	Update(user models.UserUpdateRequest, id string) (models.User, error)
-	Delete(id string) error
-	// ... other methods
+	Register(registerReq models.RegisterRequest) (models.User, error)
+	GetByEmail(loginReq models.LoginRequest) (models.User, error)
+	GetUserInfo(id string) (models.User, error)
 }
 
-// AdminRepository defines the methods for managing admins.
+// AdminRepository defines admins.
 type AdminRepository interface {
 	GetAll() ([]models.Admin, error)
 	GetByID(id string) (models.Admin, error)
 	GetByEmail(loginReq models.LoginRequest) (models.Admin, error)
-	Create(adminReq models.Admin) (models.Admin, error)
-	Update(adminReq models.Admin, id string) (models.Admin, error)
+	Create(adminReq models.AdminRequest) (models.Admin, error)
+	Update(adminReq models.AdminRequest, id string) (models.Admin, error)
 	Delete(id string) error
 }
 
-// ComplaintRepository defines the methods for managing complaints.
+// ComplaintRepository defines complaints.
 type ComplaintRepository interface {
 	GetAll() ([]models.Complaint, error)
 	GetByID(id string) (models.Complaint, error)
-	Create(complaintReq models.Complaint) (models.Complaint, error)
-	Update(complaintReq models.Complaint, id string) (models.Complaint, error)
+	Create(complaintReq models.ComplaintRequest) (models.Complaint, error)
+	Update(complaintReq models.ComplaintRequest, id string) (models.Complaint, error)
 	Delete(id string) error
 }
 
-// DoctorRepository defines the methods for managing doctors.
+// DoctorRepository defines doctors.
 type DoctorRepository interface {
 	GetAll() ([]models.Doctor, error)
 	GetByID(id string) (models.Doctor, error)
@@ -39,7 +39,7 @@ type DoctorRepository interface {
 	Delete(id string) error
 }
 
-// InformationRepository defines the methods for managing information.
+// InformationRepository defines information.
 type InformationRepository interface {
 	GetAll() ([]models.Information, error)
 	GetByID(id string) (models.Information, error)
@@ -48,7 +48,7 @@ type InformationRepository interface {
 	Delete(id string) error
 }
 
-// RecommendationRepository defines the methods for managing recommendations.
+// RecommendationRepository defines recommendations.
 type RecommendationRepository interface {
 	GetAll() ([]models.Recommendation, error)
 	GetByID(id string) (models.Recommendation, error)

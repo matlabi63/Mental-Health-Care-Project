@@ -1,6 +1,7 @@
 package repositories_test
 
 import (
+	"MentalHealthCare/models"
 	"MentalHealthCare/repositories/mocks"
 	"MentalHealthCare/services"
 	"os"
@@ -28,11 +29,11 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	// userService = services.InitUserService(models.JWTOptions{})
-	// userService.Repository = &userRepository
+	userService = services.InitUserService(models.JWTOptions{})
+	userService.Repository = &userRepository
 
-	// adminService = services.InitAdminService()
-	// adminService.Repository = &adminRepository
+	adminService = services.InitAdminService()
+	adminService.Repository = &adminRepository
 
 	complaintService = services.InitComplaintService()
 	complaintService.Repository = &complaintRepository

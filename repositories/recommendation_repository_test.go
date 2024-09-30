@@ -1,290 +1,107 @@
-// package repositories_test
-
-// import (
-// 	"MentalHealthCare/models"
-// 	"errors"
-// 	"testing"
-
-// 	"github.com/stretchr/testify/assert"
-// )
-
-// var recommendationRepository *mocks.RecommendationRepository // Assuming you have a mock setup
-// var recommendationService *RecommendationService              // Assuming you have a Recommendation service
-
-// func TestMain(m *testing.M) {
-// 	recommendationRepository = new(mocks.RecommendationRepository)
-// 	recommendationService = NewRecommendationService(recommendationRepository) // Initialize your service with the mock repository
-// 	m.Run()
-// }
-
-// func TestGetAll(t *testing.T) {
-// 	t.Run("GetAll | Valid", func(t *testing.T) {
-// 		recommendationRepository.On("GetAll").Return([]models.Recommendation{}, nil).Once()
-
-// 		result, err := recommendationService.GetAll()
-
-// 		assert.NotNil(t, result)
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("GetAll | Invalid", func(t *testing.T) {
-// 		recommendationRepository.On("GetAll").Return([]models.Recommendation{}, errors.New("error")).Once()
-
-// 		result, err := recommendationService.GetAll()
-
-// 		assert.NotNil(t, result)
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-// func TestGetByID(t *testing.T) {
-// 	t.Run("GetByID | Valid", func(t *testing.T) {
-// 		recommendationRepository.On("GetByID", "1").Return(models.Recommendation{}, nil).Once()
-
-// 		result, err := recommendationService.GetByID("1")
-
-// 		assert.NotNil(t, result)
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("GetByID | Invalid", func(t *testing.T) {
-// 		recommendationRepository.On("GetByID", "0").Return(models.Recommendation{}, errors.New("whoops")).Once()
-
-// 		result, err := recommendationService.GetByID("0")
-
-// 		assert.NotNil(t, result)
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-// func TestCreate(t *testing.T) {
-// 	t.Run("Create | Valid", func(t *testing.T) {
-// 		recReq := models.Recommendation{Description: "Recommended treatment", DoctorID: 1, UserID: 2}
-// 		recommendationRepository.On("Create", recReq).Return(recReq, nil).Once()
-
-// 		result, err := recommendationService.Create(recReq)
-
-// 		assert.NotNil(t, result)
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("Create | Invalid", func(t *testing.T) {
-// 		recReq := models.Recommendation{Description: "Recommended treatment", DoctorID: 1, UserID: 2}
-// 		recommendationRepository.On("Create", recReq).Return(models.Recommendation{}, errors.New("whoops")).Once()
-
-// 		result, err := recommendationService.Create(recReq)
-
-// 		assert.NotNil(t, result)
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-// func TestUpdate(t *testing.T) {
-// 	t.Run("Update | Valid", func(t *testing.T) {
-// 		recReq := models.Recommendation{Description: "Updated recommendation", DoctorID: 1, UserID: 2}
-// 		recommendationRepository.On("Update", recReq, "1").Return(recReq, nil).Once()
-
-// 		result, err := recommendationService.Update(recReq, "1")
-
-// 		assert.NotNil(t, result)
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("Update | Invalid", func(t *testing.T) {
-// 		recReq := models.Recommendation{Description: "Updated recommendation", DoctorID: 1, UserID: 2}
-// 		recommendationRepository.On("Update", recReq, "0").Return(models.Recommendation{}, errors.New("whoops")).Once()
-
-// 		result, err := recommendationService.Update(recReq, "0")
-
-// 		assert.NotNil(t, result)
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-// func TestDelete(t *testing.T) {
-// 	t.Run("Delete | Valid", func(t *testing.T) {
-// 		recommendationRepository.On("Delete", "1").Return(nil).Once()
-
-// 		err := recommendationService.Delete("1")
-
-// 		assert.Nil(t, err)
-// 	})
-
-// 	t.Run("Delete | Invalid", func(t *testing.T) {
-// 		recommendationRepository.On("Delete", "0").Return(errors.New("whoops")).Once()
-
-// 		err := recommendationService.Delete("0")
-
-// 		assert.NotNil(t, err)
-// 	})
-// }
-
-///
-
 package repositories_test
 
 import (
 	"MentalHealthCare/models"
-	"MentalHealthCare/repositories/mocks"
 	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRecommendationRepository_Create(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewRecommendationRepository(t)
+func TestGetAll(t *testing.T) {
+	t.Run("GetAll | Valid", func(t *testing.T) {
+		recommendationRepository.On("GetAll").Return([]models.Recommendation{}, nil).Once()
 
-	// Define a sample recommendation to create
-	recommendationReq := models.Recommendation{
-		Description:      "This is a Description message.",
-		DoctorID:  102,
-		UserID : 1,
-	}
+		result, err := recommendationService.GetAll()
 
-	// Define the expected result
-	expectedRecommendation := recommendationReq
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("Create", recommendationReq).Return(expectedRecommendation, nil)
+	t.Run("GetAll | Invalid", func(t *testing.T) {
+		recommendationRepository.On("GetAll").Return([]models.Recommendation{}, errors.New("error")).Once()
 
-	// Call the method
-	result, err := mockRepo.Create(recommendationReq)
+		result, err := recommendationService.GetAll()
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedRecommendation, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestRecommendationRepository_Create_Error(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewRecommendationRepository(t)
+func TestGetByID(t *testing.T) {
+	t.Run("GetByID | Valid", func(t *testing.T) {
+		recommendationRepository.On("GetByID", "1").Return(models.Recommendation{}, nil).Once()
 
-	// Define a sample recommendation to create
-	recommendationReq := models.Recommendation{
-		Description:      "This is a Description message.",
-		DoctorID:  102,
-		UserID : 1,
-	}
+		result, err := recommendationService.GetByID("1")
 
-	// Define the error we expect
-	expectedError := errors.New("failed to create recommendation")
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("Create", recommendationReq).Return(models.Recommendation{}, expectedError)
+	t.Run("GetByID | Invalid", func(t *testing.T) {
+		recommendationRepository.On("GetByID", "0").Return(models.Recommendation{}, errors.New("whoops")).Once()
 
-	// Call the method
-	result, err := mockRepo.Create(recommendationReq)
+		result, err := recommendationService.GetByID("0")
 
-	// Assert the result
-	assert.Error(t, err)
-	assert.Equal(t, expectedError, err)
-	assert.Equal(t, models.Recommendation{}, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestRecommendationRepository_Delete(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewRecommendationRepository(t)
+func TestCreate(t *testing.T) {
+	t.Run("Create | Valid", func(t *testing.T) {
+		recommendationRepository.On("Create", models.RecommendationRequest{}).Return(models.Recommendation{}, nil).Once()
 
-	// Define the ID to delete
-	recommendationID := "1"
+		result, err := recommendationService.Create(models.RecommendationRequest{})
 
-	// Set up the expectation
-	mockRepo.On("Delete", recommendationID).Return(nil)
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Call the method
-	err := mockRepo.Delete(recommendationID)
+	t.Run("Create | Invalid", func(t *testing.T) {
+		recommendationRepository.On("Create", models.RecommendationRequest{}).Return(models.Recommendation{}, errors.New("oops")).Once()
 
-	// Assert the result
-	assert.NoError(t, err)
+		result, err := recommendationService.Create(models.RecommendationRequest{})
 
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestRecommendationRepository_GetAll(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewRecommendationRepository(t)
+func TestUpdate(t *testing.T) {
+	t.Run("Update | Valid", func(t *testing.T) {
+		recommendationRepository.On("Update", models.RecommendationRequest{}, "1").Return(models.Recommendation{}, nil).Once()
 
-	// Define the expected recommendations
-	expectedRecommendations := []models.Recommendation{
-		{Description: "Description 1", DoctorID: 102, UserID: 1},
-		{Description: "Description 2", DoctorID: 103, UserID: 2},
-	}
+		result, err := recommendationService.Update(models.RecommendationRequest{}, "1")
 
-	// Set up the expectation
-	mockRepo.On("GetAll").Return(expectedRecommendations, nil)
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Call the method
-	result, err := mockRepo.GetAll()
+	t.Run("Update | Invalid", func(t *testing.T) {
+		recommendationRepository.On("Update", models.RecommendationRequest{}, "0").Return(models.Recommendation{}, errors.New("oops")).Once()
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedRecommendations, result)
+		result, err := recommendationService.Update(models.RecommendationRequest{}, "0")
 
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestRecommendationRepository_GetByID(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewRecommendationRepository(t)
+func TestDelete(t *testing.T) {
+	t.Run("Delete | Valid", func(t *testing.T) {
+		recommendationRepository.On("Delete", "1").Return(nil).Once()
 
-	// Define the ID to fetch
-	recommendationID := "1"
+		err := recommendationService.Delete("1")
 
-	// Define the expected recommendation
-	expectedRecommendation := models.Recommendation{
-		Description:      "This is a Description message.",
-		DoctorID:  102,
-		UserID : 1,
-	}
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("GetByID", recommendationID).Return(expectedRecommendation, nil)
+	t.Run("Delete | Invalid", func(t *testing.T) {
+		recommendationRepository.On("Delete", "0").Return(errors.New("whoops")).Once()
 
-	// Call the method
-	result, err := mockRepo.GetByID(recommendationID)
+		err := recommendationService.Delete("0")
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedRecommendation, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
-}
-
-func TestRecommendationRepository_Update(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewRecommendationRepository(t)
-
-	// Define a sample recommendation to update
-	recommendationReq := models.Recommendation{
-		Description:      "This is a Description message.",
-		DoctorID:  102,
-		UserID : 1,
-	}
-
-	// Define the expected updated recommendation
-	expectedRecommendation := recommendationReq
-
-	// Set up the expectation
-	mockRepo.On("Update", recommendationReq, "1").Return(expectedRecommendation, nil)
-
-	// Call the method
-	result, err := mockRepo.Update(recommendationReq, "1")
-
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedRecommendation, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, err)
+	})
 }

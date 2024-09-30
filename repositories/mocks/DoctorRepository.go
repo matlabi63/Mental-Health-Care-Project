@@ -14,7 +14,7 @@ type DoctorRepository struct {
 }
 
 // Create provides a mock function with given fields: doctorReq
-func (_m *DoctorRepository) Create(doctorReq models.Doctor) (models.Doctor, error) {
+func (_m *DoctorRepository) Create(doctorReq models.DoctorRequest) (models.Doctor, error) {
 	ret := _m.Called(doctorReq)
 
 	if len(ret) == 0 {
@@ -23,16 +23,16 @@ func (_m *DoctorRepository) Create(doctorReq models.Doctor) (models.Doctor, erro
 
 	var r0 models.Doctor
 	var r1 error
-	if rf, ok := ret.Get(0).(func(models.Doctor) (models.Doctor, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.DoctorRequest) (models.Doctor, error)); ok {
 		return rf(doctorReq)
 	}
-	if rf, ok := ret.Get(0).(func(models.Doctor) models.Doctor); ok {
+	if rf, ok := ret.Get(0).(func(models.DoctorRequest) models.Doctor); ok {
 		r0 = rf(doctorReq)
 	} else {
 		r0 = ret.Get(0).(models.Doctor)
 	}
 
-	if rf, ok := ret.Get(1).(func(models.Doctor) error); ok {
+	if rf, ok := ret.Get(1).(func(models.DoctorRequest) error); ok {
 		r1 = rf(doctorReq)
 	} else {
 		r1 = ret.Error(1)
@@ -118,7 +118,7 @@ func (_m *DoctorRepository) GetByID(id string) (models.Doctor, error) {
 }
 
 // Update provides a mock function with given fields: doctorReq, id
-func (_m *DoctorRepository) Update(doctorReq models.Doctor, id string) (models.Doctor, error) {
+func (_m *DoctorRepository) Update(doctorReq models.DoctorRequest, id string) (models.Doctor, error) {
 	ret := _m.Called(doctorReq, id)
 
 	if len(ret) == 0 {
@@ -127,16 +127,16 @@ func (_m *DoctorRepository) Update(doctorReq models.Doctor, id string) (models.D
 
 	var r0 models.Doctor
 	var r1 error
-	if rf, ok := ret.Get(0).(func(models.Doctor, string) (models.Doctor, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.DoctorRequest, string) (models.Doctor, error)); ok {
 		return rf(doctorReq, id)
 	}
-	if rf, ok := ret.Get(0).(func(models.Doctor, string) models.Doctor); ok {
+	if rf, ok := ret.Get(0).(func(models.DoctorRequest, string) models.Doctor); ok {
 		r0 = rf(doctorReq, id)
 	} else {
 		r0 = ret.Get(0).(models.Doctor)
 	}
 
-	if rf, ok := ret.Get(1).(func(models.Doctor, string) error); ok {
+	if rf, ok := ret.Get(1).(func(models.DoctorRequest, string) error); ok {
 		r1 = rf(doctorReq, id)
 	} else {
 		r1 = ret.Error(1)

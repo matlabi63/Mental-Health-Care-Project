@@ -1,79 +1,146 @@
 package controllers
 
 import (
-	"MentalHealthCare/database"
 	"MentalHealthCare/models"
+	"MentalHealthCare/services"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-// GetMentalHealthInfo retrieves all mental health information
-func GetMentalHealthInfo(c echo.Context) error {
-	var info []models.Information
-	if err := database.DB.Find(&info).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-	return c.JSON(http.StatusOK, info)
+type InformationController struct {
+	service     services.InformationService
+}
+ 
+func InitInformationController() InformationController {
+	return InformationController {
+		service:     services.InitInformationService(),
+}
 }
 
-// GetMentalHealthInfoByID retrieves specific mental health information by ID
-func GetMentalHealthInfoByID(c echo.Context) error {
-	infoID := c.Param("id")
-	var info models.Information
+func (mc *InformationController) GetAll(c echo.Context) error {
+	informations, err := mc.service.GetAll()
 
-	if err := database.DB.First(&info, infoID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Information not found"})
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed with information",
+		})
 	}
-	return c.JSON(http.StatusOK, info)
+
+	return c.JSON(http.StatusOK, models.Response[[]models.Information]{
+		Status:  "Success",
+		Message: "All information",
+		Data:    informations,
+	})
 }
 
-// CreateMentalHealthInfo creates new mental health information
-func CreateMentalHealthInfo(c echo.Context) error {
-	var info models.Information
-	if err := c.Bind(&info); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+func (mc *InformationController) GetByID(c echo.Context) error {
+	informationID := c.Param("id")
+
+	information, err := mc.service.GetByID(informationID)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, models.Response[string]{
+			Status:  "Failed",
+			Message: "Information not found",
+		})
 	}
 
-	if err := database.DB.Create(&info).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	return c.JSON(http.StatusCreated, info)
+	return c.JSON(http.StatusOK, models.Response[models.Information]{
+		Status:  "Success",
+		Message: "Information found",
+		Data:    information,
+	})
 }
 
-// UpdateMentalHealthInfo updates existing mental health information by ID
-func UpdateMentalHealthInfo(c echo.Context) error {
-	infoID := c.Param("id")
-	var info models.Information
+func (mc *InformationController) Create(c echo.Context) error {
+	var infoReq models.InformationRequest
 
-	if err := database.DB.First(&info, infoID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Information not found"})
+	if err := c.Bind(&infoReq); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
 	}
 
-	if err := c.Bind(&info); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	err := infoReq.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Please complete all the required files",
+		})
 	}
 
-	if err := database.DB.Save(&info).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	information, err := mc.service.Create(infoReq)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed to create the Information",
+		})
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{"message": "Information updated successfully", "info": info})
+	return c.JSON(http.StatusCreated, models.Response[models.Information]{
+		Status:  "Success",
+		Message: "Information created",
+		Data:    information,
+	})
 }
 
-// DeleteMentalHealthInfo deletes mental health information by ID
-func DeleteMentalHealthInfo(c echo.Context) error {
-	infoID := c.Param("id")
-	var info models.Information
+func (mc *InformationController) Update(c echo.Context) error {
+	var infoReq models.InformationRequest
 
-	if err := database.DB.First(&info, infoID).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Information not found"})
+	if err := c.Bind(&infoReq); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
 	}
 
-	if err := database.DB.Delete(&info).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	informationID := c.Param("id")
+
+	err := infoReq.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Please complete all the required files",
+		})
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"message": "Information deleted successfully"})
+	information, err := mc.service.Update(infoReq, informationID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed to update the Information",
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Response[models.Information]{
+		Status:  "Success",
+		Message: "Information updated",
+		Data:    information,
+	})
+}
+
+func (mc *InformationController) Delete(c echo.Context) error {
+	informationID := c.Param("id")
+
+
+	err := mc.service.Delete(informationID)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Failed to delete information",
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Response[string]{
+		Status:  "Success",
+		Message: "Information deleted",
+	})
 }

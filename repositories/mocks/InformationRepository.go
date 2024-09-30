@@ -14,7 +14,7 @@ type InformationRepository struct {
 }
 
 // Create provides a mock function with given fields: infoReq
-func (_m *InformationRepository) Create(infoReq models.Information) (models.Information, error) {
+func (_m *InformationRepository) Create(infoReq models.InformationRequest) (models.Information, error) {
 	ret := _m.Called(infoReq)
 
 	if len(ret) == 0 {
@@ -23,16 +23,16 @@ func (_m *InformationRepository) Create(infoReq models.Information) (models.Info
 
 	var r0 models.Information
 	var r1 error
-	if rf, ok := ret.Get(0).(func(models.Information) (models.Information, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.InformationRequest) (models.Information, error)); ok {
 		return rf(infoReq)
 	}
-	if rf, ok := ret.Get(0).(func(models.Information) models.Information); ok {
+	if rf, ok := ret.Get(0).(func(models.InformationRequest) models.Information); ok {
 		r0 = rf(infoReq)
 	} else {
 		r0 = ret.Get(0).(models.Information)
 	}
 
-	if rf, ok := ret.Get(1).(func(models.Information) error); ok {
+	if rf, ok := ret.Get(1).(func(models.InformationRequest) error); ok {
 		r1 = rf(infoReq)
 	} else {
 		r1 = ret.Error(1)
@@ -118,7 +118,7 @@ func (_m *InformationRepository) GetByID(id string) (models.Information, error) 
 }
 
 // Update provides a mock function with given fields: infoReq, id
-func (_m *InformationRepository) Update(infoReq models.Information, id string) (models.Information, error) {
+func (_m *InformationRepository) Update(infoReq models.InformationRequest, id string) (models.Information, error) {
 	ret := _m.Called(infoReq, id)
 
 	if len(ret) == 0 {
@@ -127,16 +127,16 @@ func (_m *InformationRepository) Update(infoReq models.Information, id string) (
 
 	var r0 models.Information
 	var r1 error
-	if rf, ok := ret.Get(0).(func(models.Information, string) (models.Information, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.InformationRequest, string) (models.Information, error)); ok {
 		return rf(infoReq, id)
 	}
-	if rf, ok := ret.Get(0).(func(models.Information, string) models.Information); ok {
+	if rf, ok := ret.Get(0).(func(models.InformationRequest, string) models.Information); ok {
 		r0 = rf(infoReq, id)
 	} else {
 		r0 = ret.Get(0).(models.Information)
 	}
 
-	if rf, ok := ret.Get(1).(func(models.Information, string) error); ok {
+	if rf, ok := ret.Get(1).(func(models.InformationRequest, string) error); ok {
 		r1 = rf(infoReq, id)
 	} else {
 		r1 = ret.Error(1)

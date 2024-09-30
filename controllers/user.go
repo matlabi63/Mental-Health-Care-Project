@@ -1,73 +1,119 @@
 package controllers
 
 import (
-	"MentalHealthCare/database"
+	"MentalHealthCare/middlewares"
 	"MentalHealthCare/models"
+	"MentalHealthCare/services"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-// GetUsers retrieves all users
-func GetUsers(c echo.Context) error {
-	var users []models.User
-	if err := database.DB.Find(&users).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-	return c.JSON(http.StatusOK, users)
+type UserController struct {
+	service services.UserService
 }
 
-// GetUserByID retrieves a user by their ID
-func GetUserByID(c echo.Context) error {
-	id := c.Param("id")
-	var user models.User
-	if err := database.DB.First(&user, id).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "User not found"})
+func InitUserController(jwtOptions models.JWTOptions) UserController {
+	return UserController{
+		service: services.InitUserService(jwtOptions),
 	}
-	return c.JSON(http.StatusOK, user)
 }
 
-// CreateUser creates a new user
-func CreateUser(c echo.Context) error {
-	var user models.User
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+func (uc *UserController) Register(c echo.Context) error {
+	var registerReq models.RegisterRequest
+
+	if err := c.Bind(&registerReq); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
 	}
 
-	if err := database.DB.Create(&user).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	err := registerReq.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
 	}
 
-	return c.JSON(http.StatusCreated, user)
+	user, err := uc.service.Register(registerReq)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Response[string]{
+			Status:  "Failed",
+			Message: "Registration failed",
+		})
+	}
+
+	return c.JSON(http.StatusCreated, models.Response[models.User]{
+		Status:  "Success",
+		Message: "User registered",
+		Data:    user,
+	})
 }
 
-// UpdateUser updates an existing user by ID
-func UpdateUser(c echo.Context) error {
-	id := c.Param("id")
-	var user models.User
+func (uc *UserController) Login(c echo.Context) error {
+	var loginReq models.LoginRequest
 
-	if err := database.DB.First(&user, id).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "User not found"})
+	if err := c.Bind(&loginReq); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "failed",
+			Message: "invalid request",
+		})
 	}
 
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	err := loginReq.Validate()
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid request",
+		})
 	}
 
-	if err := database.DB.Save(&user).Error; err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	token, err := uc.service.Login(loginReq)
+
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, models.Response[string]{
+			Status:  "Failed",
+			Message: "Invalid email or password",
+		})
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, models.Response[string]{
+		Status:  "Success",
+		Message: "Login success",
+		Data:    token,
+	})
 }
 
-// DeleteUser deletes a user by ID
-func DeleteUser(c echo.Context) error {
-	id := c.Param("id")
+func (uc *UserController) GetUserInfo(c echo.Context) error {
+	claim, err := middlewares.GetUser(c)
 
-	if err := database.DB.Delete(&models.User{}, id).Error; err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "User not found"})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "User not found",
+		})
 	}
 
-	return c.JSON(http.StatusNoContent, nil)
+	userID := strconv.Itoa(claim.ID)
+
+	user, err := uc.service.GetUserInfo(userID)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.Response[string]{
+			Status:  "Failed",
+			Message: "User not found",
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Response[models.User]{
+		Status:  "Success",
+		Message: "User information",
+		Data:    user,
+	})
 }

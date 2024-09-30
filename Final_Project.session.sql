@@ -51,9 +51,3 @@ CREATE TABLE doctors (
     available_users VARCHAR(255)
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 )
-
-CREATE TABLE patients (
-    user_id INT PRIMARY KEY,
-    mental_status VARCHAR(255),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-)

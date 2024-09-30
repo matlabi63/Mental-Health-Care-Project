@@ -14,7 +14,7 @@ type ComplaintRepository struct {
 }
 
 // Create provides a mock function with given fields: complaintReq
-func (_m *ComplaintRepository) Create(complaintReq models.Complaint) (models.Complaint, error) {
+func (_m *ComplaintRepository) Create(complaintReq models.ComplaintRequest) (models.Complaint, error) {
 	ret := _m.Called(complaintReq)
 
 	if len(ret) == 0 {
@@ -23,16 +23,16 @@ func (_m *ComplaintRepository) Create(complaintReq models.Complaint) (models.Com
 
 	var r0 models.Complaint
 	var r1 error
-	if rf, ok := ret.Get(0).(func(models.Complaint) (models.Complaint, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.ComplaintRequest) (models.Complaint, error)); ok {
 		return rf(complaintReq)
 	}
-	if rf, ok := ret.Get(0).(func(models.Complaint) models.Complaint); ok {
+	if rf, ok := ret.Get(0).(func(models.ComplaintRequest) models.Complaint); ok {
 		r0 = rf(complaintReq)
 	} else {
 		r0 = ret.Get(0).(models.Complaint)
 	}
 
-	if rf, ok := ret.Get(1).(func(models.Complaint) error); ok {
+	if rf, ok := ret.Get(1).(func(models.ComplaintRequest) error); ok {
 		r1 = rf(complaintReq)
 	} else {
 		r1 = ret.Error(1)
@@ -118,7 +118,7 @@ func (_m *ComplaintRepository) GetByID(id string) (models.Complaint, error) {
 }
 
 // Update provides a mock function with given fields: complaintReq, id
-func (_m *ComplaintRepository) Update(complaintReq models.Complaint, id string) (models.Complaint, error) {
+func (_m *ComplaintRepository) Update(complaintReq models.ComplaintRequest, id string) (models.Complaint, error) {
 	ret := _m.Called(complaintReq, id)
 
 	if len(ret) == 0 {
@@ -127,16 +127,16 @@ func (_m *ComplaintRepository) Update(complaintReq models.Complaint, id string) 
 
 	var r0 models.Complaint
 	var r1 error
-	if rf, ok := ret.Get(0).(func(models.Complaint, string) (models.Complaint, error)); ok {
+	if rf, ok := ret.Get(0).(func(models.ComplaintRequest, string) (models.Complaint, error)); ok {
 		return rf(complaintReq, id)
 	}
-	if rf, ok := ret.Get(0).(func(models.Complaint, string) models.Complaint); ok {
+	if rf, ok := ret.Get(0).(func(models.ComplaintRequest, string) models.Complaint); ok {
 		r0 = rf(complaintReq, id)
 	} else {
 		r0 = ret.Get(0).(models.Complaint)
 	}
 
-	if rf, ok := ret.Get(1).(func(models.Complaint, string) error); ok {
+	if rf, ok := ret.Get(1).(func(models.ComplaintRequest, string) error); ok {
 		r1 = rf(complaintReq, id)
 	} else {
 		r1 = ret.Error(1)
@@ -145,7 +145,6 @@ func (_m *ComplaintRepository) Update(complaintReq models.Complaint, id string) 
 	return r0, r1
 }
 
-// NewComplaintRepository creates a new instance of ComplaintRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 func NewComplaintRepository(t interface {
 	mock.TestingT
 	Cleanup(func())

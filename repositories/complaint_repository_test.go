@@ -2,162 +2,106 @@ package repositories_test
 
 import (
 	"MentalHealthCare/models"
-	"MentalHealthCare/repositories/mocks"
 	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestComplaintRepository_Create(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewComplaintRepository(t)
+func TestGetAllComplaint(t *testing.T) {
+	t.Run("GetAll | Valid", func(t *testing.T) {
+		complaintRepository.On("GetAll").Return([]models.Complaint{}, nil).Once()
 
-	// Define a sample complaint to create
-	complaintReq := models.Complaint{
-		UserID:  101,
-		Details: "This is a complaint message.",
-	}
+		result, err := complaintService.GetAll()
 
-	// Define the expected result
-	expectedComplaint := complaintReq
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("Create", complaintReq).Return(expectedComplaint, nil)
+	t.Run("GetAll | Invalid", func(t *testing.T) {
+		complaintRepository.On("GetAll").Return([]models.Complaint{}, errors.New("error")).Once()
 
-	// Call the method
-	result, err := mockRepo.Create(complaintReq)
+		result, err := complaintService.GetAll()
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedComplaint, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestComplaintRepository_Create_Error(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewComplaintRepository(t)
+func TestGetByIDComplaint(t *testing.T) {
+	t.Run("GetByID | Valid", func(t *testing.T) {
+		complaintRepository.On("GetByID", "1").Return(models.Complaint{}, nil).Once()
 
-	// Define a sample complaint to create
-	complaintReq := models.Complaint{
-		UserID:  101,
-		Details: "This is a complaint message.",
-	}
+		result, err := complaintService.GetByID("1")
 
-	// Define the error we expect
-	expectedError := errors.New("failed to create complaint")
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("Create", complaintReq).Return(models.Complaint{}, expectedError)
+	t.Run("GetByID | Invalid", func(t *testing.T) {
+		complaintRepository.On("GetByID", "0").Return(models.Complaint{}, errors.New("oops")).Once()
 
-	// Call the method
-	result, err := mockRepo.Create(complaintReq)
+		result, err := complaintService.GetByID("0")
 
-	// Assert the result
-	assert.Error(t, err)
-	assert.Equal(t, expectedError, err)
-	assert.Equal(t, models.Complaint{}, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestComplaintRepository_Delete(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewComplaintRepository(t)
+func TestCreateComplaint(t *testing.T) {
+	t.Run("Create | Valid", func(t *testing.T) {
+		complaintRepository.On("Create", models.ComplaintRequest{}).Return(models.Complaint{}, nil).Once()
 
-	// Define the ID to delete
-	complaintID := "1"
+		result, err := complaintService.Create(models.ComplaintRequest{})
 
-	// Set up the expectation
-	mockRepo.On("Delete", complaintID).Return(nil)
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Call the method
-	err := mockRepo.Delete(complaintID)
+	t.Run("Create | Invalid", func(t *testing.T) {
+		complaintRepository.On("Create", models.ComplaintRequest{}).Return(models.Complaint{}, errors.New("oops")).Once()
 
-	// Assert the result
-	assert.NoError(t, err)
+		result, err := complaintService.Create(models.ComplaintRequest{})
 
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestComplaintRepository_GetAll(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewComplaintRepository(t)
+func TestUpdateComplaint(t *testing.T) {
+	t.Run("Update | Valid", func(t *testing.T) {
+		complaintRepository.On("Update", models.ComplaintRequest{}, "1").Return(models.Complaint{}, nil).Once()
 
-	// Define the expected complaints
-	expectedComplaints := []models.Complaint{
-		{ID: 1, UserID: 101, Details: "Complaint 1"},
-		{ID: 2, UserID: 102, Details: "Complaint 2"},
-	}
+		result, err := complaintService.Update(models.ComplaintRequest{}, "1")
 
-	// Set up the expectation
-	mockRepo.On("GetAll").Return(expectedComplaints, nil)
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Call the method
-	result, err := mockRepo.GetAll()
+	t.Run("Update | Invalid", func(t *testing.T) {
+		complaintRepository.On("Update", models.ComplaintRequest{}, "0").Return(models.Complaint{}, errors.New("whoops")).Once()
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedComplaints, result)
+		result, err := complaintService.Update(models.ComplaintRequest{}, "0")
 
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestComplaintRepository_GetByID(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewComplaintRepository(t)
+func TestDeleteComplaint(t *testing.T) {
+	t.Run("Delete | Valid", func(t *testing.T) {
+		complaintRepository.On("Delete", "1").Return(nil).Once()
 
-	// Define the ID to fetch
-	complaintID := "1"
+		err := complaintService.Delete("1")
 
-	// Define the expected complaint
-	expectedComplaint := models.Complaint{
-		UserID:  101,
-		Details: "This is a complaint message.",
-	}
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("GetByID", complaintID).Return(expectedComplaint, nil)
+	t.Run("Delete | Invalid", func(t *testing.T) {
+		complaintRepository.On("Delete", "0").Return(errors.New("whoops")).Once()
 
-	// Call the method
-	result, err := mockRepo.GetByID(complaintID)
+		err := complaintService.Delete("0")
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedComplaint, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
-}
-
-func TestComplaintRepository_Update(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewComplaintRepository(t)
-
-	// Define a sample complaint to update
-	complaintReq := models.Complaint{
-		UserID:  101,
-		Details: "This is a complaint message.",
-	}
-
-	// Define the expected updated complaint
-	expectedComplaint := complaintReq
-
-	// Set up the expectation
-	mockRepo.On("Update", complaintReq, "1").Return(expectedComplaint, nil)
-
-	// Call the method
-	result, err := mockRepo.Update(complaintReq, "1")
-
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedComplaint, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, err)
+	})
 }

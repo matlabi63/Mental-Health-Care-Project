@@ -2,162 +2,107 @@ package repositories_test
 
 import (
 	"MentalHealthCare/models"
-	"MentalHealthCare/repositories/mocks"
 	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAdminRepository_Create(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewAdminRepository(t)
+func TestGetAllAdmin(t *testing.T) {
+	t.Run("GetAll | Valid", func(t *testing.T) {
+		adminRepository.On("GetAll").Return([]models.Admin{}, nil).Once()
 
-	// Define a sample admin to create
-	adminReq := models.Admin{
-		UserID:      1,
-    ManageUsers: true,
-	}
+		result, err := adminService.GetAll()
 
-	// Define the expected result
-	expectedAdmin := adminReq
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("Create", adminReq).Return(expectedAdmin, nil)
+	t.Run("GetAll | Invalid", func(t *testing.T) {
+		adminRepository.On("GetAll").Return([]models.Admin{}, errors.New("error")).Once()
 
-	// Call the method
-	result, err := mockRepo.Create(adminReq)
+		result, err := adminService.GetAll()
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedAdmin, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestAdminRepository_Create_Error(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewAdminRepository(t)
+func TestGetByIDAdmin(t *testing.T) {
+	t.Run("GetByID | Valid", func(t *testing.T) {
+		adminRepository.On("GetByID", "1").Return(models.Admin{}, nil).Once()
 
-	// Define a sample admin to create
-	adminReq := models.Admin{
-		UserID:      1,
-    ManageUsers: true,
-	}
+		result, err := adminService.GetByID("1")
 
-	// Define the error we expect
-	expectedError := errors.New("failed to create admin")
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("Create", adminReq).Return(models.Admin{}, expectedError)
+	t.Run("GetByID | Invalid", func(t *testing.T) {
+		adminRepository.On("GetByID", "0").Return(models.Admin{}, errors.New("whoops")).Once()
 
-	// Call the method
-	result, err := mockRepo.Create(adminReq)
+		result, err := adminService.GetByID("0")
 
-	// Assert the result
-	assert.Error(t, err)
-	assert.Equal(t, expectedError, err)
-	assert.Equal(t, models.Admin{}, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestAdminRepository_Delete(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewAdminRepository(t)
 
-	// Define the ID to delete
-	adminID := "1"
+func TestCreateAdmin(t *testing.T) {
+	t.Run("Create | Valid", func(t *testing.T) {
+		adminRepository.On("Create", models.AdminRequest{}).Return(models.Admin{}, nil).Once()
 
-	// Set up the expectation
-	mockRepo.On("Delete", adminID).Return(nil)
+		result, err := adminService.Create(models.AdminRequest{})
 
-	// Call the method
-	err := mockRepo.Delete(adminID)
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Assert the result
-	assert.NoError(t, err)
+	t.Run("Create | Invalid", func(t *testing.T) {
+		adminRepository.On("Create", models.AdminRequest{}).Return(models.Admin{}, errors.New("whoops")).Once()
 
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		result, err := adminService.Create(models.AdminRequest{})
+
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestAdminRepository_GetAll(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewAdminRepository(t)
+func TestUpdateAdmin(t *testing.T) {
+	t.Run("Update | Valid", func(t *testing.T) {
+		adminRepository.On("Update", models.AdminRequest{}, "1").Return(models.Admin{}, nil).Once()
 
-	// Define the expected admins
-	expectedAdmins := []models.Admin{
-		{ID: 1, UserID : 1, ManageUsers: true},
-    {ID: 2, UserID : 2, ManageUsers: false},
-	}
+		result, err := adminService.Update(models.AdminRequest{}, "1")
 
-	// Set up the expectation
-	mockRepo.On("GetAll").Return(expectedAdmins, nil)
+		assert.NotNil(t, result)
+		assert.Nil(t, err)
+	})
 
-	// Call the method
-	result, err := mockRepo.GetAll()
+	t.Run("Update | Invalid", func(t *testing.T) {
+		adminRepository.On("Update", models.AdminRequest{}, "0").Return(models.Admin{}, errors.New("whoops")).Once()
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedAdmins, result)
+		result, err := adminService.Update(models.AdminRequest{}, "0")
 
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, result)
+		assert.NotNil(t, err)
+	})
 }
 
-func TestAdminRepository_GetByID(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewAdminRepository(t)
+func TestDeleteAdmin(t *testing.T) {
+	t.Run("Delete | Valid", func(t *testing.T) {
+		adminRepository.On("Delete", "1").Return(nil).Once()
 
-	// Define the ID to fetch
-	adminID := "1"
+		err := adminService.Delete("1")
 
-	// Define the expected admin
-	expectedAdmin := models.Admin{
-		UserID:      1,
-    ManageUsers: true,
-	}
+		assert.Nil(t, err)
+	})
 
-	// Set up the expectation
-	mockRepo.On("GetByID", adminID).Return(expectedAdmin, nil)
+	t.Run("Delete | Invalid", func(t *testing.T) {
+		adminRepository.On("Delete", "0").Return(errors.New("whoops")).Once()
 
-	// Call the method
-	result, err := mockRepo.GetByID(adminID)
+		err := adminService.Delete("0")
 
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedAdmin, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
-}
-
-func TestAdminRepository_Update(t *testing.T) {
-	// Initialize the mock repository
-	mockRepo := mocks.NewAdminRepository(t)
-
-	// Define a sample admin to update
-	adminReq := models.Admin{
-		UserID:      1,
-    ManageUsers: true,
-	}
-
-	// Define the expected updated admin
-	expectedAdmin := adminReq
-
-	// Set up the expectation
-	mockRepo.On("Update", adminReq, "1").Return(expectedAdmin, nil)
-
-	// Call the method
-	result, err := mockRepo.Update(adminReq, "1")
-
-	// Assert the result
-	assert.NoError(t, err)
-	assert.Equal(t, expectedAdmin, result)
-
-	// Assert that the expectations were met
-	mockRepo.AssertExpectations(t)
+		assert.NotNil(t, err)
+	})
 }
