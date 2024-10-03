@@ -24,6 +24,8 @@ func (ur *UserRepositoryImpl) Register(registerReq models.RegisterRequest) (mode
 	var user models.User = models.User{
 		Email:    registerReq.Email,
 		Password: string(password),
+		Name: registerReq.Name,
+		Role: registerReq.Role,
 		// add features
 	}
 

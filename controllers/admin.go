@@ -139,7 +139,7 @@ func (cc *AdminController) Delete(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, models.Response[string]{
-		Status:  "success",
+		Status:  "Success",
 		Message: "Admin deleted",
 	})
 }
