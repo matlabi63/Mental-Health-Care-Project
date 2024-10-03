@@ -15,7 +15,7 @@ type AdminRepositoryImpl struct{}
 func (ar *AdminRepositoryImpl) GetAll() ([]models.Admin, error) {
 	var admins []models.Admin
 
-	if err := database.DB.Find(&admins).Error; err != nil {
+	if err := database.DB.Preload("User").Find(&admins).Error; err != nil {
 		return []models.Admin{}, err
 	}
 
