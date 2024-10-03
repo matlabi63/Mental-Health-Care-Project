@@ -25,7 +25,7 @@ func (ar *AdminRepositoryImpl) GetAll() ([]models.Admin, error) {
 func (ar *AdminRepositoryImpl) GetByID(id string) (models.Admin, error) {
 	var admin models.Admin
 
-	if err := database.DB.First(&admin, "id = ?", id).Error; err != nil {
+	if err := database.DB.Preload("User").First(&admin, "id = ?", id).Error; err != nil {
 		return models.Admin{}, err
 	}
 
@@ -46,7 +46,6 @@ func (ar *AdminRepositoryImpl) Create(adminReq models.AdminRequest) (models.Admi
 	var admin models.Admin = models.Admin{
 		UserID: adminReq.UserID,
 		ManageUsers: adminReq.ManageUsers,
-
 	}
 
 	result := database.DB.Create(&admin)
