@@ -15,7 +15,7 @@ This application serves as a comprehensive platform for managing stress and anxi
 
 - ## Mental_Health_care UseCase: [Mental Health Care Project UseCase](https://drive.google.com/file/d/11JkDkyQBQFAfTwE7VD3i58ER_2mfqW1O/view?usp=sharing)
 
-- ## API Documentation: [Mental Health Care Application](https://mental-health-care.postman.co/workspace/Mental-Health-Care-Workspace~346a1053-7058-45d0-9788-c214bb57e3c3/collection/36680903-82950e84-d953-462d-ad3b-17eebee21c63?action=share&creator=36680903)
+- ## API Documentation: [Mental Health Care Application](https://documenter.getpostman.com/view/36680903/2sAXxLBuDG)
 
 ## Key Features
 
